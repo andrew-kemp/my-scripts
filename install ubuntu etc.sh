@@ -33,11 +33,11 @@ AllowOverride All
 
 
 
-32Ldd9^rE&sKSg3e
+32Ldd9^r%$£%$^vv783E&sKSg3e
 
 sudo mysql 
 CREATE DATABASE db_kemponline; 
-CREATE USER user_kemponline@localhost IDENTIFIED BY '32Ldd9^rE&sKSg3e'; 
+CREATE USER user_kemponline@localhost IDENTIFIED BY '32Ldd9^r%$£%$^vv783E&sKSg3e'; 
 GRANT ALL PRIVILEGES ON db_kemponline.* TO user_kemponline@localhost; 
 FLUSH PRIVILEGES; 
 
@@ -66,7 +66,7 @@ Exit
 Access Server Web UIs are available here:
 Admin  UI: https://192.168.1.228:943/admin
 Client UI: https://192.168.1.228:943/
-To login please use the "openvpn" account with "ZeJofrdSgUu2" password.
+To login please use the "openvpn" account with "32Ldd9^r%$£%$^vv783E&sKSg3e" password.
 (password can be changed on Admin UI)
 
 ###################
