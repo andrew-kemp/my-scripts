@@ -1,0 +1,3 @@
+$regPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+#Enable proxy
+Set-ItemProperty -Path $regPath -Name "ProxyEnable" -Value 0
