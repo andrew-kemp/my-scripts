@@ -1,0 +1,1 @@
+write-output "Script worked" | out-file c:\Scripts\output.txt
