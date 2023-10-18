@@ -1,0 +1,1 @@
+Get-AppxPackage -AllUsers  | Where-Object {$_.PackageFullName -notlike "*windows*"} |Where-Object {$_.PackageFullName -notlike "*store*"} |Remove-AppxPackage
