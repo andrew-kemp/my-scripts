@@ -1,5 +1,5 @@
 $PrimaryDomain = Read-Host "What is the Primary Domain you want to update?"
-$SecondaryDomain = Read-Host "Whatt is the new doomain you want to add as an alias?"
+$SecondaryDomain = Read-Host "What is the new doomain you want to add as an alias?"
 
 $users = Get-Mailbox | Where-Object{$_.PrimarySMTPAddress -match $PrimaryDomain}
  
