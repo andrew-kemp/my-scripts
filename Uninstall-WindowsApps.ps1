@@ -67,4 +67,3 @@ ForEach ($AppxPackage in $InstalledPackages) {
 
 
 
-Stop-Transcript
