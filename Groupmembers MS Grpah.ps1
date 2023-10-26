@@ -17,3 +17,8 @@ $json = @{
   
 Invoke-MgGraphRequest -Uri $uri -Body $json -Method PATCH -ContentType "application/json"
 }
+
+#Get all the devices that start with the name PAW
+# Get-MgDevice | ? {$_.DisplayName -like '*PAW*'}
+#Add this to the script to by pass the is member of
+ # $Devices = Get-MgDevice | ? {$_.DisplayName -like '*PAW*'}
