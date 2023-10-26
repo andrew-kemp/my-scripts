@@ -28,7 +28,10 @@ $UninstallPackages = @(
     "Microsoft.ClipChamp"
     "Microsoft.YourPhone"
     "Microsoft.GamingApp"
-    ""
+    "Microsoft.Paint"
+    "Microsoft.WindowsMaps"
+    "Microsoft.WindowsSoundRecorder"
+    "Microsoft.Windows.Photos"
 )
 
 
