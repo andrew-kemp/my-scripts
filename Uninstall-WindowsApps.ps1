@@ -32,6 +32,7 @@ $UninstallPackages = @(
     "Microsoft.WindowsMaps"
     "Microsoft.WindowsSoundRecorder"
     "Microsoft.Windows.Photos"
+    "Microsoft.Paint"
 )
 
 
