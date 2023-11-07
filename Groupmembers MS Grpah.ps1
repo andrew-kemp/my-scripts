@@ -27,7 +27,7 @@ $Devices = Get-MgGroupMember -GroupId $groupId
 #Get each device that is in the group or has the name starting with PAW
 ForEach ($device in $Devices) {
 
-# The Graph Magic    
+    
 $uri = $null
 $uri = "https://graph.microsoft.com/v1.0/devices/" + $device.id
 

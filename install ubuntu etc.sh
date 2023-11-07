@@ -36,9 +36,9 @@ AllowOverride All
 32Ldd9^r%$£%$^vv783E&sKSg3e
 
 sudo mysql 
-CREATE DATABASE db_kemponline; 
-CREATE USER user_kemponline@localhost IDENTIFIED BY '32Ldd9^r%$£%$^vv783E&sKSg3e'; 
-GRANT ALL PRIVILEGES ON db_kemponline.* TO user_kemponline@localhost; 
+CREATE DATABASE db_andrewkemp; 
+CREATE USER user_andrewkemp@localhost IDENTIFIED BY '32Ldd9^r%$£%$^vv783E&sKSg3e'; 
+GRANT ALL PRIVILEGES ON db_andrewkemp.* TO user_andrewkemp@localhost; 
 FLUSH PRIVILEGES; 
 
 Exit 
@@ -75,3 +75,20 @@ curl -o setup-repos.sh https://raw.githubusercontent.com/webmin/webmin/master/se
 sh setup-repos.sh
 
 apt-get install --install-recommends webmin
+
+
+ [i] Pi-hole blocking will be enabled
+  [i] Enabling blocking
+  [✓] Reloading DNS lists
+  [✓] Pi-hole Enabled
+  [i] Web Interface password: KBbHYk6X
+  [i] This can be changed using 'pihole -a -p'
+
+  [i] View the web interface at http://pi.hole/admin or http://192.168.1.228/admin
+
+  [i] You may now configure your devices to use the Pi-hole as their DNS server
+  [i] Pi-hole DNS (IPv4): 192.168.1.228
+  [i] If you have not done so already, the above IP should be set to static.
+
+  [i] The install log is located at: /etc/pihole/install.log
+  [✓] Installation complete!
