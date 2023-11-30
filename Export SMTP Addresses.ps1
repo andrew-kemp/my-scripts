@@ -1,0 +1,1 @@
+Get-RemoteMailbox -ResultSize Unlimited | Select-Object DisplayName,Alias,UserPrincipalName,SamAccountname,Name,PrimarySmtpAddress, @{Name="EmailAddresses";Expression={$_.EmailAddresses | Where-Object {$_.PrefixString -ceq "smtp"} | ForEach-Object {$_.SmtpAddress}}} | Sort-Object DisplayName | Export-Csv C:\scripts\usersmtp.csv -NoTypeInformation
