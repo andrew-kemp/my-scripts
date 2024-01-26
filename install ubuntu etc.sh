@@ -9,6 +9,7 @@ sudo mkdir -p /var/www/andrewkemp.co.uk
 sudo chown -R $USER:$USER /var/www/andrewkemp.co.uk
 sudo chmod -R 755 /var/www 
 sudo chmod 757 /var/www/andrewkemp.co.uk
+sudo chmod 757 /var/www/andrewkemp.co.uk
 
 sudo nano /etc/apache2/sites-available/andrewkemp.co.uk.conf  
 
@@ -23,10 +24,10 @@ DocumentRoot /var/www/andrewkemp.co.uk
 ServerName www.andrewkemp.co.uk  
 ServerAlias andrewkemp.co.uk  
 SSLEngine on  
-SSLCertificateFile /var/cert/andrewkmp.crt  
+SSLCertificateFile /var/cert/andrewkemp.crt  
 SSLCertificateKeyFile /var/cert/andrewkemp.key  
 SSLCACertificateFile /var/cert/DigiCertCA.crt  
-<Directory /var/www/andrewkemps.co.uk/>  
+<Directory /var/www/andrewkemp.co.uk/>  
 AllowOverride All  
 </Directory> 
 </VirtualHost> 

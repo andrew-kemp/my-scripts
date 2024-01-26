@@ -6,14 +6,14 @@ https://andykempstorage.blob.core.windows.net/website-backup?sp=rw&st=2023-10-13
 #Version 1.0
 
 #Variables
-Azure_Blob="https://andykempstorage.blob.core.windows.net/website-backup?sp=rw&st=2023-10-13T16:57:44Z&se=2023-10-14T00:57:44Z&spr=https&sv=2022-11-02&sr=c&sig=lMQdcJd9WzNVjhTOMEu33yTPuKZQEQOnJZ96ZGOO1RM%3D"
+Azure_Blob="https://andykempstorage.blob.core.windows.net/apollo?sp=rw&st=2024-01-10T09:43:48Z&se=2026-05-06T16:43:48Z&spr=https&sv=2022-11-02&sr=c&sig=I2IIgkahZARrCiVZxtZ7%2FRGHU0EW%2B%2F2IAOMn6cODYIg%3D"
 Today=$(date +%A)
 Web_Config="/etc/apache2/sites-available/andrewkemp.co.uk.conf"
 DB_Name="db_andrewkemp"
 Postfix_Config="/etc/postfix/main.cf"
 SASL_Passwd="/etc/postfix/sasl_passwd"
 Temp_Backup="/temp_backup"
-Website_Path="/var/www/www.andrewkemp.co.uk"
+Website_Path="/var/www/andrewkemp.co.uk"
 Cert_Directory="/var/cert"
 
 
