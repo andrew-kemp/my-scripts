@@ -15,7 +15,7 @@ sudo nano /etc/apache2/sites-available/andrewkemp.co.uk.conf
 
 <VirtualHost *:80>  
 ServerName www.andrewkemp.co.uk  
-ServerAliasandrewkemp.co.uk  
+ServerAlias andrewkemp.co.uk  
 Redirect / https://www.andrewkemp.co.uk  
 </VirtualHost>  
 <VirtualHost _Default_:443>  

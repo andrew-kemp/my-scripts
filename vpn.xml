@@ -1,0 +1,102 @@
+<VPNProfile>
+   <!-- TestC VPN profile settings for VPNv2 CSP in Windows 10, as per below reference URLs -->
+   <!-- https://docs.microsoft.com/en-us/windows/client-management/mdm/vpnv2-csp -->
+   <!-- https://docs.microsoft.com/en-us/windows/security/identity-protection/vpn/vpn-profile-options -->
+   <!-- ProfileXML version = 0.2 -->
+   <!-- Updated 07/06/23 -->
+   <AlwaysOn>true</AlwaysOn>
+   <DnsSuffix>ad.kemponline.co.uk</DnsSuffix>
+   <!-- The TrustedNetworkDetection setting is optional and used to prevent the VPN connection from being established when the device is on the internal network. -->
+   <TrustedNetworkDetection>ad.kemponline.co.uk</TrustedNetworkDetection>
+   <NativeProfile>
+      <Servers>vpn.kemponline.co.uk</Servers>
+      <!-- Using IKEv2 in line with NCSC guidance https://www.ncsc.gov.uk/collection/device-security-guidance/platform-guides/windows -->
+      <NativeProtocolType>IKEv2</NativeProtocolType>
+      <Authentication>
+         <UserMethod>Eap</UserMethod>
+         <Eap>
+            <Configuration>
+               <!-- Use Get-EapConfiguration.ps1 (https://rmhci.co/2UqQ3jz) to extract EAP configuration from existing connection and paste file contents here! -->
+               <EapHostConfig xmlns="http://www.microsoft.com/provisioning/EapHostConfig">
+                  <EapMethod>
+                     <Type xmlns="http://www.microsoft.com/provisioning/EapCommon">25</Type>
+                     <VendorId xmlns="http://www.microsoft.com/provisioning/EapCommon">0</VendorId>
+                     <VendorType xmlns="http://www.microsoft.com/provisioning/EapCommon">0</VendorType>
+                     <AuthorId xmlns="http://www.microsoft.com/provisioning/EapCommon">0</AuthorId>
+                  </EapMethod>
+                  <Config xmlns="http://www.microsoft.com/provisioning/EapHostConfig">
+                     <Eap xmlns="http://www.microsoft.com/provisioning/BaseEapConnectionPropertiesV1">
+                        <Type>25</Type>
+                        <EapType xmlns="http://www.microsoft.com/provisioning/MsPeapConnectionPropertiesV1">
+                           <ServerValidation>
+                              <DisableUserPromptForServerValidation>true</DisableUserPromptForServerValidation>
+                              <ServerNames>nps2.ad.kemponline.co.uk</ServerNames>
+                              <TrustedRootCA>51 8c 2f 6a 03 ac 7d 41 12 ad e7 ee a4 ee 6e 88 78 ae 35 b2 </TrustedRootCA>
+                           </ServerValidation>
+                           <FastReconnect>true</FastReconnect>
+                           <InnerEapOptional>false</InnerEapOptional>
+                           <Eap xmlns="http://www.microsoft.com/provisioning/BaseEapConnectionPropertiesV1">
+                              <Type>13</Type>
+                              <EapType xmlns="http://www.microsoft.com/provisioning/EapTlsConnectionPropertiesV1">
+                                 <CredentialsSource>
+                                    <CertificateStore>
+                                       <SimpleCertSelection>true</SimpleCertSelection>
+                                    </CertificateStore>
+                                 </CredentialsSource>
+                                 <ServerValidation>
+                                    <DisableUserPromptForServerValidation>true</DisableUserPromptForServerValidation>
+                                    <ServerNames>nps1.ad.kemponline.co.uk</ServerNames>
+                                    <TrustedRootCA>51 8c 2f 6a 03 ac 7d 41 12 ad e7 ee a4 ee 6e 88 78 ae 35 b2 </TrustedRootCA>
+                                 </ServerValidation>
+                                 <DifferentUsername>false</DifferentUsername>
+                                 <PerformServerValidation xmlns="http://www.microsoft.com/provisioning/EapTlsConnectionPropertiesV2">true</PerformServerValidation>
+                                 <AcceptServerName xmlns="http://www.microsoft.com/provisioning/EapTlsConnectionPropertiesV2">true</AcceptServerName>
+                                 <TLSExtensions xmlns="http://www.microsoft.com/provisioning/EapTlsConnectionPropertiesV2">
+                                    <FilteringInfo xmlns="http://www.microsoft.com/provisioning/EapTlsConnectionPropertiesV3">
+                                       <CAHashList Enabled="true">
+                                          <IssuerHash>51 8c 2f 6a 03 ac 7d 41 12 ad e7 ee a4 ee 6e 88 78 ae 35 b2 </IssuerHash>
+                                       </CAHashList>
+                                    </FilteringInfo>
+                                 </TLSExtensions>
+                              </EapType>
+                           </Eap>
+                           <EnableQuarantineChecks>false</EnableQuarantineChecks>
+                           <RequireCryptoBinding>false</RequireCryptoBinding>
+                           <PeapExtensions>
+                              <PerformServerValidation xmlns="http://www.microsoft.com/provisioning/MsPeapConnectionPropertiesV2">true</PerformServerValidation>
+                              <AcceptServerName xmlns="http://www.microsoft.com/provisioning/MsPeapConnectionPropertiesV2">true</AcceptServerName>
+                           </PeapExtensions>
+                        </EapType>
+                     </Eap>
+                  </Config>
+               </EapHostConfig>
+            </Configuration>
+         </Eap>
+      </Authentication>
+      <!-- The recommended routing policy type is SplitTunnel. However, ForceTunnel can be enabled if required. Details here: https://rmhci.co/2VrLDay. -->
+      <RoutingPolicyType>SplitTunnel</RoutingPolicyType>
+      <!-- The DisableClassBasedDefaultRoute setting is optional but recommended. -->
+      <DisableClassBasedDefaultRoute>true</DisableClassBasedDefaultRoute>
+      <!-- The CryptographySuite setting is optional but recommended when using IKEv2. The default security settings for IKEv2 are extremely weak. Details here: https://rmhci.co/2Eou3Op. -->
+      <!-- Enabling this setting requires the VPN server to use matching settings. A PowerShell script to configure Windows Server RRAS servers can be found here: https://rmhci.co/2WRpFgl. -->
+      <!-- The cryptography settings defined below are recommended minimum security baselines. They can be changed to meet higher level security requirements as required. -->
+      <CryptographySuite>
+         <AuthenticationTransformConstants>GCMAES128</AuthenticationTransformConstants>
+         <CipherTransformConstants>GCMAES128</CipherTransformConstants>
+         <!-- This display format differs from the output of Get-VPNServerConfiguration, but is the same functional setting -->
+         <EncryptionMethod>AES_GCM_128</EncryptionMethod>
+         <IntegrityCheckMethod>SHA256</IntegrityCheckMethod>
+         <DHGroup>Group14</DHGroup>
+         <PfsGroup>ECP256</PfsGroup>
+      </CryptographySuite>
+   </NativeProfile>
+   <!-- The Route setting is required when DisableClassBasedDefaultRoute is set to "true". -->
+   <Route>
+      <Address>10.0.0.0</Address>
+      <PrefixSize>8</PrefixSize>
+   </Route>
+   <Route>
+      <Address>192.168.0.0</Address>
+      <PrefixSize>16</PrefixSize>
+   </Route>
+</VPNProfile>

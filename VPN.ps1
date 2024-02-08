@@ -15,7 +15,7 @@ $DomainName = '.ad.kemponline.co.uk' #Used to indicate the namespace to which th
 
 $DNSServers = '192.168.10.12' #List of comma-separated DNS Server IP addresses to use for the namespace.
 
-$TrustedNetwork = 'ad.kemponline.co.uk'' #Comma-separated string to identify the trusted network.
+$TrustedNetwork = 'ad.kemponline.co.uk' #Comma-separated string to identify the trusted network.
 
 
 #Get the EAP settings for the current profile called $TemplateName
