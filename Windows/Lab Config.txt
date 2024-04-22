@@ -1,0 +1,11 @@
+Install-WindowsFeature -name AD-Domain-Services 
+Install-ADDSForest -DomainName "ad.andyk.co.uk" -DomainNetBIOSName "AndyK"
+
+New-ADUser -SamAccountName admin_ak -GivenName Andrew -SurName Kemp - DisplayNAme "Andrew Kemp (Admin)" -Enabled $true
+Set-ADAccountPassword -Identity admin_ak -Reset
+
+Add-ADGroupMember "Domain Admins" -Members admin_ak
+Add-ADGroupMember "Schema Admins" -Members admin_ak
+Add-ADGroupMember "Enterprise Admins" -Members admin_ak
+
+

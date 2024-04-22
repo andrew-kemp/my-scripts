@@ -46,7 +46,7 @@ Exit
 
 
 
-openssl req -new -newkey rsa:2048 -nodes -out andrewkemp.csr -keyout andrewkemp.key -subj "/C=GB/ST=Edinburgh/L=Edinburgh/O=AK Demo Labs/OU=IT/CN=*.andrewkemp.co.uk"
+openssl req -new -newkey rsa:2048 -nodes -out andykemp.csr -keyout andykemp.key -subj "/C=GB/ST=Edinburgh/L=Edinburgh/O=Andy Kemp/OU=IT/CN=*.andykemp.com"
 
 wget -c http://wordpress.org/latest.tar.gz 
 tar -xzvf latest.tar.gz 

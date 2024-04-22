@@ -1,0 +1,82 @@
+<EapHostConfig xmlns="http://www.microsoft.com/provisioning/EapHostConfig">
+<EapMethod>
+<Type xmlns="http://www.microsoft.com/provisioning/EapCommon">25</Type>
+<VendorId xmlns="http://www.microsoft.com/provisioning/EapCommon">0</VendorId>
+<VendorType xmlns="http://www.microsoft.com/provisioning/EapCommon">0</VendorType>
+<AuthorId xmlns="http://www.microsoft.com/provisioning/EapCommon">0</AuthorId>
+</EapMethod>
+<Config xmlns="http://www.microsoft.com/provisioning/EapHostConfig">
+<Eap xmlns="http://www.microsoft.com/provisioning/BaseEapConnectionPropertiesV1">
+<Type>
+25
+</Type
+><EapType xmlns="http://www.microsoft.com/provisioning/MsPeapConnectionPropertiesV1">
+<ServerValidation>
+<DisableUserPromptForServerValidation>
+true
+</DisableUserPromptForServerValidation>
+<ServerNames>
+radius.ad.kemponline.co.uk
+</ServerNames>
+<TrustedRootCA>
+3b 2d eb 62 48 3a 20 9f 13 a9 4e 55 19 a5 0b 96 7b 04 79 9d 
+</TrustedRootCA>
+</ServerValidation>
+<FastReconnect>
+true
+</FastReconnect>
+<InnerEapOptional>
+false
+</InnerEapOptional>
+<Eap xmlns="http://www.microsoft.com/provisioning/BaseEapConnectionPropertiesV1">
+<Type>
+13
+</Type>
+<EapType xmlns="http://www.microsoft.com/provisioning/EapTlsConnectionPropertiesV1">
+<CredentialsSource>
+<CertificateStore>
+<SimpleCertSelection>
+true
+</SimpleCertSelection>
+</CertificateStore>
+</CredentialsSource>
+<ServerValidation>
+<DisableUserPromptForServerValidation>
+true
+</DisableUserPromptForServerValidation>
+<ServerNames>
+radius.ad.kemponline.co.uk
+</ServerNames>
+<TrustedRootCA>
+3b 2d eb 62 48 3a 20 9f 13 a9 4e 55 19 a5 0b 96 7b 04 79 9d 
+</TrustedRootCA>
+</ServerValidation>
+<DifferentUsername>
+false
+</DifferentUsername>
+<PerformServerValidation xmlns="http://www.microsoft.com/provisioning/EapTlsConnectionPropertiesV2">
+true
+</PerformServerValidation>
+<AcceptServerName xmlns="http://www.microsoft.com/provisioning/EapTlsConnectionPropertiesV2">
+true
+</AcceptServerName>
+</EapType>
+</Eap>
+<EnableQuarantineChecks>
+false
+</EnableQuarantineChecks>
+<RequireCryptoBinding>
+false
+</RequireCryptoBinding>
+<PeapExtensions>
+<PerformServerValidation xmlns="http://www.microsoft.com/provisioning/MsPeapConnectionPropertiesV2">
+true
+</PerformServerValidation>
+<AcceptServerName xmlns="http://www.microsoft.com/provisioning/MsPeapConnectionPropertiesV2">
+true
+</AcceptServerName>
+</PeapExtensions>
+</EapType>
+</Eap>
+</Config>
+</EapHostConfig>
