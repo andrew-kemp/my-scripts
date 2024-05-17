@@ -3,7 +3,8 @@ $SecondaryDomain = Read-Host "What is the new doomain you want to add as an alia
 
 $users = Get-Mailbox | Where-Object{$_.PrimarySMTPAddress -match $PrimaryDomain}
  
-foreach($user in $users){
+foreach($user in $users)
+{
     Write-Host "Adding Alias $($user.alias)@+$SecondayDomain to $user.PrimarySmtpAddress"
     #Set-Mailbox $user.PrimarySmtpAddress -EmailAddresses @{add="$($user.Alias)@+$SecondayDomain"}
 }
