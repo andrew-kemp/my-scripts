@@ -6,11 +6,11 @@ Install-Module -Name Microsoft.Graph.Intune -Scope CurrentUser -Force
 
 $params = @{
 	extensionAttributes = @{
-		extensionAttribute1 = "PAW"
+		extensionAttribute2 = "PAWAccess"
     }
 }
 
-$PAW = Get-MgDevice -Filter "startswith(displayName, 'PAW')"
+$PAW = Get-MgDevice -Filter "startswith(displayName, 'Cloud-PAW')"
 
 ForEach-Object {
     Update-MgDevice -DeviceId $PAW.ID -BodyParameter $params
