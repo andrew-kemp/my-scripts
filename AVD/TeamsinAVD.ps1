@@ -1,3 +1,4 @@
+Set-ExecutionPolicy RemoteSigned -Force
 New-Item -Path "HKLM:\SOFTWARE\Microsoft\Teams" -Force
 New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Teams" -Name IsWVDEnvironment -PropertyType DWORD -Value 1 -Force
 
