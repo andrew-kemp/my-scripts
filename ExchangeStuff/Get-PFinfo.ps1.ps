@@ -42,7 +42,7 @@ if ($publicFolders) {
     }
 
     # Export to CSV
-    $folderDetails | Export-Csv -Path "PublicFoldersReport24.csv" -NoTypeInformation
+    $folderDetails | Export-Csv -Path "PublicFolderInfo.csv" -NoTypeInformation
 } else {
     Write-Host "No public folders found."
 }
