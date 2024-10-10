@@ -1,0 +1,45 @@
+# Script to Export Public Folder sizes in MB to CSV.
+# User will need to run "Connect-ExchangeOnline" initially and be connected to Exchange Online management from PowerShell in order to run this
+# Created by Andrew Kemp 10th Oct 2024
+
+$publicFolders = Get-PublicFolder -Recurse
+
+# Check if public folders were retrieved
+if ($publicFolders) {
+    # Create an array to store the folder details
+    $folderDetails = @()
+
+    foreach ($folder in $publicFolders) {
+        try {
+            $folderStats = Get-PublicFolderStatistics -Identity $folder.Identity
+            $folderSizeString = $folderStats.TotalItemSize.ToString()
+            $itemCount = $folderStats.ItemCount
+            
+            # Handle the case where the size is 0 B
+            if ($folderSizeString -match '0 B') {
+                $folderSizeMB = '0 MB'
+            } else {
+                # Extract the size in KB using -replace to handle both decimal and whole numbers
+                $folderSizeKB = $folderSizeString -replace '(\d+(\.\d+)?).*', '$1'
+                # Convert KB to MB
+                $folderSizeMB = [math]::Round([double]$folderSizeKB / 1024, 2).ToString() + ' MB'
+            }
+        } catch {
+            $folderSizeMB = "Error retrieving size"
+            $itemCount = "Error retrieving item count"
+        }
+
+        $folderDetails += [PSCustomObject]@{
+            ParentPath = $folder.ParentPath
+            Path = $folder.Identity
+            ItemCount = $itemCount
+            Size = $folderSizeMB
+            
+        }
+    }
+
+    # Export to CSV
+    $folderDetails | Export-Csv -Path "PublicFoldersReport18.csv" -NoTypeInformation
+} else {
+    Write-Host "No public folders found."
+}
