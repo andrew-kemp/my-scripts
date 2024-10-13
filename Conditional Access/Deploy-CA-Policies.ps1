@@ -1,21 +1,47 @@
-Connect-MgGraph -Scopes "Policy.Read.All", "Policy.ReadWrite.ConditionalAccess", "User.Read.All"
+# Script to create a set of Conditional Access Policies for a Tenant
+# These Policies will be set to Report Only and Target a CA Test Group
+
+
+# Ensure that the Microsoft Graph Module is installed by running:
+# Install-Module Microsoft.Graph -Force
+# If the Microsoft Graph is already installed then update running
+# Update-Module Microsoft.Graph -Force
+
+# Connect to the Microsoft Graph
+Connect-MgGraph -Scopes "Policy.Read.All", "Policy.ReadWrite.ConditionalAccess", "User.Read.All", "Group.ReadWrite.All"
 Import-Module Microsoft.Graph.Identity.SignIns
+
+# Check to see if the test Group Exists if not create a test group
+
+$groupName = "_Group - CA Test"
+$group = Get-MgGroup -Filter "DisplayName eq '$groupName'"
+
+if ($group) {
+    # Group exists, store its ID in $GroupID
+    $GroupID = $group.Id
+    Write-Output "The targeted group ID for $groupName is: $GroupID which will be applied to the CA Policies"
+} else {
+    # Group does not exist, create the group
+    $newGroup = New-MgGroup -DisplayName $groupName -MailEnabled $false -MailNickname $groupName -SecurityEnabled $true
+    $GroupID = $newGroup.Id
+    Write-Output "The target group $groupName for the CA Policies has been created. The group ID is: $GroupID"
+}
+
 # Get the ID of the main admin account to exclude from the CA Policy
 $ExcludeAdmin = Get-MgUser -userID admin@andykempdev.onmicrosoft.com
 $ExcludeAdminID =$ExcludeAdmin.ID
+    Write-Output "The Excluded user for all polcieis is $ExcludedAdmin and its ID is $ExcludeAdminID"
 
-# Get the ID of the group to target the policies at
-$GroupName = "_Group - CA Test"
-$TargetGroup = Get-MgGroup -Filter "DisplayName eq '$groupName'"
-$TargetGroupID = $TargetGroup.ID
+
 
 # Enable MFA for all users
+$PolicyName = "101 - Enable MFA for all - Graph API"
 $params = @{
-    displayName = "101 - Enable MFA for all - Graph API"
+    displayName = $PolicyName 
     state = "enabledForReportingButNotEnforced"  # Set to "enabled" to enforce the policy
     conditions = @{
         users = @{
-            includeGroups = @("$TargetGroupID")
+            includeGroups = @("$GroupID")
             excludeUsers = @("$ExcludeAdminID")
         }
         applications = @{
@@ -28,8 +54,10 @@ $params = @{
         builtInControls = @("mfa")
     }
 } 
-
+Write-Output "Creating Conditional Access Policy $PolicyName "
 New-MgIdentityConditionalAccessPolicy -BodyParameter $params
+Write-output "$PolicyName has been created"
+
 
 
 # Only Allow Company Owned Devices access
@@ -38,7 +66,7 @@ $params = @{
     state = "enabledForReportingButNotEnforced"  # Set to "enabled" to enforce the policy
     conditions = @{
         users = @{
-            includeGroups = @("$TargetGroupID")
+            includeGroups = @("$GroupID")
             excludeUsers = @("$ExcludeAdminID")
         }
         applications = @{
