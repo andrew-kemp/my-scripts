@@ -1,5 +1,11 @@
 # Script to create a set of Conditional Access Policies for a Tenant
 # These Policies will be set to Report Only and Target a CA Test Group
+# Created by Andrew Kemp
+# Version 1.1
+# Email andrew@kemponline.co.uk
+# Date Created 13th October 2024
+# Date Updated 13th October 2024
+# Updates made: 
 
 
 # Ensure that the Microsoft Graph Module is installed by running:
