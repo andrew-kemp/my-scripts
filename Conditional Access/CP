@@ -123,6 +123,21 @@ if (-not $GroupID) {
     $newGroup = New-MgGroup -DisplayName $groupName -MailEnabled $false -MailNickname $groupName -SecurityEnabled $true
     $GroupID = $newGroup.Id
     Write-Output "Group created. The new group ID is: $GroupID"
+
+    $ownerUPN = Read-Host "what is the UPN of the Owner for $groupName?"
+    Get-MgUser
+    # Get the user ID of the owner
+    $Owner = Get-MgUser -UserID $OwnerUPN
+    $ownerId = $owner.Id
+
+    # Add the user as an owner of the group
+    $ownerRef = @{
+        "@odata.id" = "https://graph.microsoft.com/v1.0/users/$ownerId"
+    }
+
+    New-MgGroupOwnerByRef -GroupId $groupId -BodyParameter $ownerRef
+
+Write-Output "Owner added to the group. The owner ID is: $ownerId"
 }
 
 
