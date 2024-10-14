@@ -142,7 +142,7 @@ if ($group) {
     Write-Output "The targeted group ID for $groupName is: $GroupID which will be applied to the CA Policies"
 } else {
     # Group does not exist, create the group
-    $param = @{
+    $grpParams = @{
         description="Conditional Access Policy Test Group"
         displayName="_Group - CA Test"
         mailEnabled=$false
@@ -150,12 +150,30 @@ if ($group) {
         mailNickname="catest"
        }
        # Create the group based on the parameters set above which are pulled from the CSV
-       $newGroup =   New-MgGroup @param
+       $newGroup =   New-MgGroup @grpParams
      
     #New-MgGroup -DisplayName $groupName -MailEnabled $false -MailNickname $groupName -SecurityEnabled $true
     $GroupID = $newGroup.Id
     Write-Output "The target group $groupName for the CA Policies has been created. The group ID is: $GroupID"
 }
+########################################################################
+# Create a group for Privileged accounts
+
+# Define the dynamic membership rule
+$membershipRule = '((user.userPrincipalName -contains "admin_"))'
+# Create the dynamic group
+$PrivgrpName = "_Priv - Admin Users"
+$grpParams = @{
+    displayName = $PrivgrpName
+    groupTypes = "DynamicMembership"
+    mailEnabled = $false
+    mailNickname = "adminusersgroup"
+    membershipRule = $membershipRule
+    membershipRuleProcessingState = "On"
+    securityEnabled = $true
+}
+$PrivGroup = New-MgGroup @grpParams
+$PrivGroupID = $PrivGroup.Id
 
 ########################################################################
 # Enable MFA for all users
@@ -232,11 +250,12 @@ Write-output "$PolicyName has been created"
 $PolicyName = "901 - Privileged ssers sign in every 8 hours - Graph API"
 $params = @{
     displayName = $PolicyName 
-    state = "reportOnly"  # Set to "enabled" to enforce the policy
+    state = "enabledForReportingButNotEnforced"  # Set to "enabled" to enforce the policy
     conditions = @{
         users = @{
-            includeRoles = @("All")
-            excludeUsers = @("user1@domain.com", "user2@domain.com")
+            IncludeGroups = @("$PrivGroupID")
+            excludeUsers = @("$UserID1",
+                            "$UserID2")
         }
         applications = @{
             includeApplications = @("All")
@@ -246,6 +265,8 @@ $params = @{
         signInFrequency = @{
             value = 8
             type = "hours"
+            isEnabled = $true
+
         }
     }
 }
@@ -263,7 +284,7 @@ $ownerRef = @{
 }
 
 New-MgGroupOwnerByRef -GroupId $groupId -BodyParameter $ownerRef
-
+New-MgGroupOwnerByRef -GroupId $PrivGroupID -BodyParameter $ownerRef
 Write-Output "Owner added to the group. The owner ID is: $ownerId"
 
 # Add BreakGlass 2 as Group Owner
@@ -276,5 +297,14 @@ $ownerRef = @{
 }
 
 New-MgGroupOwnerByRef -GroupId $groupId -BodyParameter $ownerRef
+New-MgGroupOwnerByRef -GroupId $PrivGroupID -BodyParameter $ownerRef
 
 Write-Output "Owner added to the group. The owner ID is: $ownerId"
+
+
+
+
+
+
+
+
