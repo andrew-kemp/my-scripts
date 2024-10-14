@@ -17,6 +17,70 @@
 Connect-MgGraph -Scopes "Policy.Read.All", "Policy.ReadWrite.ConditionalAccess", "User.Read.All", "Group.ReadWrite.All"
 Import-Module Microsoft.Graph.Identity.SignIns
 
+# Get the Teanant domain name
+$domains = Get-MgDomain
+$onMicrosoftDomain = $domains | Where-Object { $_.Id -like "*.onmicrosoft.com" -and $_.ID -notlike "*.mail.onmicrosoft.com" }
+
+if ($onMicrosoftDomain) {
+    $onMicrosoftDomain | ForEach-Object { Write-Output "Found .onmicrosoft.com domain: $($_.ID)" }
+    $domainName = $onMicrosoftDomain.ID  # Select the first .onmicrosoft.com domain
+} else {
+    Write-Output "No .onmicrosoft.com domain found."
+    return
+}
+
+# create the Break Glass Account UPN if they will be needed down the line
+$BreakGlass1 = "BreakGlass1@$domainName"
+$BreakGlass2 = "BreakGlass2@$domainName"
+
+# Fulntion to create a randomly generates 16 Character Password:
+function Get-RandomPassword {
+    param (
+        [int]$length = 16
+    )
+    $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()"
+    -join ((1..$length) | ForEach-Object { $chars[(Get-Random -Maximum $chars.Length)] })
+}
+
+$password1 = Get-RandomPassword
+$password2 = Get-RandomPassword
+# Create the two break glass accounts
+$userInfo1 = @{
+    accountEnabled = $true
+    displayName = "Break Glass Admin 1"
+    mailNickname = "breakglassadmin1"
+    userPrincipalName = "$BreakGlass1"
+    passwordProfile = @{
+        forceChangePasswordNextSignIn = $false
+        password = $password1
+    }
+}
+
+$newUser1 = New-MgUser -BodyParameter $userInfo1
+$UserID1 = $newUser1.ID
+
+
+
+$userInfo2 = @{
+    accountEnabled = $true
+    displayName = "Break Glass Admin 2"
+    mailNickname = "breakglassadmin2"
+    userPrincipalName = "$BreakGlass2"
+    passwordProfile = @{
+        forceChangePasswordNextSignIn = $false
+        password = $password2
+    }
+}
+
+$newUser2 = New-MgUser -BodyParameter $userInfo2
+$UserID2 = $newUser2.ID
+
+Write-Output "User created. The user ID is: $userId1"
+Write-Output "The password is: $password1"
+Write-Output "User created. The user ID is: $userId2"
+Write-Output "The password is: $password2"
+
+
 # Check to see if the test Group Exists if not create a test group
 
 $groupName = "_Group - CA Test"
@@ -28,7 +92,17 @@ if ($group) {
     Write-Output "The targeted group ID for $groupName is: $GroupID which will be applied to the CA Policies"
 } else {
     # Group does not exist, create the group
-    $newGroup = New-MgGroup -DisplayName $groupName -MailEnabled $false -MailNickname $groupName -SecurityEnabled $true
+    $param = @{
+        description="Conditional Access Policy Test Group"
+        displayName="_Group - CA Test"
+        mailEnabled=$false
+        securityEnabled=$true
+        mailNickname="catest"
+       }
+       # Create the group based on the parameters set above which are pulled from the CSV
+       $newGroup =   New-MgGroup @param
+     
+    #New-MgGroup -DisplayName $groupName -MailEnabled $false -MailNickname $groupName -SecurityEnabled $true
     $GroupID = $newGroup.Id
     Write-Output "The target group $groupName for the CA Policies has been created. The group ID is: $GroupID"
 }
@@ -48,7 +122,9 @@ $params = @{
     conditions = @{
         users = @{
             includeGroups = @("$GroupID")
-            excludeUsers = @("$ExcludeAdminID")
+            excludeUsers = @("$ExcludeAdminID",
+                            "$UserID1",
+                            "$UserID2")
         }
         applications = @{
             includeApplications = @("All")
@@ -73,7 +149,9 @@ $params = @{
     conditions = @{
         users = @{
             includeGroups = @("$GroupID")
-            excludeUsers = @("$ExcludeAdminID")
+            excludeUsers = @("$ExcludeAdminID",
+                            "$UserID1",
+                            "$UserID2")
         }
         applications = @{
             includeApplications = @("All")

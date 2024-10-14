@@ -1,0 +1,140 @@
+# Get the Teantn Domain Name
+$domains = Get-MgDomain
+$onMicrosoftDomain = $domains | Where-Object { $_.Id -like "*.onmicrosoft.com" -and $_.ID -notlike "*.mail.onmicrosoft.com" }
+
+if ($onMicrosoftDomain) {
+    $onMicrosoftDomain | ForEach-Object { Write-Output "Found .onmicrosoft.com domain: $($_.ID)" }
+    $domainName = $onMicrosoftDomain.ID  # Select the first .onmicrosoft.com domain
+} else {
+    Write-Output "No .onmicrosoft.com domain found."
+    return
+}
+$BreakGlass1 = "BreakGlass1@$domainName"
+$BreakGlass2 = "BreakGlass2@$domainName"
+
+
+
+# Define the group ID and the user principal name of the owner
+$groupId = "your-group-id"
+$ownerUPN = "owner@example.com"
+
+# Get the user ID of the owner
+$owner = Get-MgUser -Filter "userPrincipalName eq '$ownerUPN'"
+$ownerId = $owner.Id
+
+# Add the user as an owner of the group
+$ownerRef = @{
+    "@odata.id" = "https://graph.microsoft.com/v1.0/users/$ownerId"
+}
+
+New-MgGroupOwnerByRef -GroupId $groupId -BodyParameter $ownerRef
+
+Write-Output "Owner added to the group. The owner ID is: $ownerId"
+##########
+<#
+.SYNOPSIS
+
+
+.DESCRIPTION
+Long description
+
+.PARAMETER length
+Parameter description
+
+.EXAMPLE
+An example
+
+.NOTES
+General notes
+#>
+
+######
+function Get-RandomPassword {
+    param (
+        [int]$length = 16
+    )
+    $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()"
+    -join ((1..$length) | ForEach-Object { $chars[(Get-Random -Maximum $chars.Length)] })
+}
+
+$password1 = Get-RandomPassword
+$password2 = Get-RandomPassword
+
+$userInfo1 = @{
+    accountEnabled = $true
+    displayName = "Break Glass Admin 1"
+    mailNickname = "breakglassadmin1"
+    userPrincipalName = "$BreakGlass1"
+    passwordProfile = @{
+        forceChangePasswordNextSignIn = $false
+        password = $password1
+    }
+}
+
+$newUser1 = New-MgUser -BodyParameter $userInfo1
+$UserID1 = $newUser1.ID
+
+Write-Output "User created. The user ID is: $userId1"
+Write-Output "The password is: $password1"
+
+$userInfo2 = @{
+    accountEnabled = $true
+    displayName = "Break Glass Admin 2"
+    mailNickname = "breakglassadmin2"
+    userPrincipalName = "$BreakGlass2"
+    passwordProfile = @{
+        forceChangePasswordNextSignIn = $false
+        password = $password2
+    }
+}
+
+$newUser2 = New-MgUser -BodyParameter $userInfo2
+$UserID2 = $newUser2.ID
+
+Write-Output "User created. The user ID is: $userId2"
+Write-Output "The password is: $password2"
+
+
+
+
+
+$groupName = Read-Host "Enter the group name you want to use (or press Enter to create a new group)"
+
+if ($groupName) {
+    # Check if the group exists
+    $group = Get-MgGroup -Filter "DisplayName eq '$groupName'"
+
+    if ($group) {
+        Write-Output "Group '$groupName' exists. The group ID is: $($group.Id)"
+        $GroupID = $group.Id
+    } else {
+        Write-Output "Group '$groupName' does not exist."
+        $groupName = Read-Host "Enter a new group name to create"
+    }
+}
+
+if (-not $groupName) {
+    # Generate a random group name if none provided
+    $groupName = "_Group - CA Test"
+}
+
+if (-not $GroupID) {
+    # Create the group
+    $newGroup = New-MgGroup -DisplayName $groupName -MailEnabled $false -MailNickname $groupName -SecurityEnabled $true
+    $GroupID = $newGroup.Id
+    Write-Output "Group created. The new group ID is: $GroupID"
+}
+
+
+$groupOwner = Read-Host "What is the UPN of the user you want to add as the Owner of $newGroup?"
+
+# Add the current user as an owner of the group
+$ownerRef = @{
+    "@odata.id" = "https://graph.microsoft.com/v1.0/users/$($groupOwner.Id)"
+}
+
+New-MgGroupOwnerByRef -GroupId $GroupID -BodyParameter $ownerRef
+
+Write-Output "Current user added as owner to the group. The user ID is: $($groupOwner.Id)"
+
+
