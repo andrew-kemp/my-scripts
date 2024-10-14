@@ -1,3 +1,26 @@
+<#
+.SYNOPSIS
+Script to create 2 Break Glass Accounts, each with a 16 Random character password
+and create a bunch of Conditional Access Policies targeted to a group to test agains
+each conditional access policy is set to ReportOnly initally. 
+
+.DESCRIPTION
+Created by Andrew Kemp
+Version 1.2
+Email andrew@kemponline.co.uk
+Date Created 13th October 2024
+Date Updated 13th October 2024
+Updates made: 14th October 2024
+
+.PARAMETER length
+Parameter description
+
+.EXAMPLE
+An example
+
+.NOTES
+General notes
+#>
 # Script to create a set of Conditional Access Policies for a Tenant
 # These Policies will be set to Report Only and Target a CA Test Group
 # Created by Andrew Kemp
