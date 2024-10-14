@@ -153,3 +153,14 @@ New-MgGroupOwnerByRef -GroupId $GroupID -BodyParameter $ownerRef
 Write-Output "Current user added as owner to the group. The user ID is: $($groupOwner.Id)"
 
 
+
+
+2dbf95fd-0b26-4d4a-ac98-e4ab60bdd87d
+
+
+https://developer.microsoft.com/en-us/graph/graph-explorer
+
+
+https://graph.microsoft.com/v1.0/identity/conditionalAccess/policies/2dbf95fd-0b26-4d4a-ac98-e4ab60bdd87d
+
+get-mgidentityConditionalAccessPolicy
