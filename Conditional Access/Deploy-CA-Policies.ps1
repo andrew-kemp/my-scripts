@@ -80,6 +80,33 @@ Write-Output "The password is: $password1"
 Write-Output "User created. The user ID is: $userId2"
 Write-Output "The password is: $password2"
 
+# Add teh Global Admin Role to the new Break Glass Accounts
+$roleName = "Global Administrator"
+$role = Get-MgDirectoryRole | Where-Object { $_.DisplayName -eq $roleName }
+
+if (-not $role) {
+    # If the role does not exist, create it
+    $roleTemplate = Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq $roleName }
+    $role = New-MgDirectoryRole -DisplayName $roleName -RoleTemplateId $roleTemplate.Id
+}
+
+# Assign the role to the user
+$roleMember = @{
+    "@odata.id" = "https://graph.microsoft.com/v1.0/users/$userId1"
+}
+
+New-MgDirectoryRoleMemberByRef -DirectoryRoleId $role.Id -BodyParameter $roleMember
+
+Write-Output "Global Admin role assigned to user ID: $userId1"
+
+$roleMember = @{
+    "@odata.id" = "https://graph.microsoft.com/v1.0/users/$userId2"
+}
+
+New-MgDirectoryRoleMemberByRef -DirectoryRoleId $role.Id -BodyParameter $roleMember
+
+Write-Output "Global Admin role assigned to user ID: $userId2"
+
 
 # Check to see if the test Group Exists if not create a test group
 
@@ -107,12 +134,6 @@ if ($group) {
     Write-Output "The target group $groupName for the CA Policies has been created. The group ID is: $GroupID"
 }
 
-# Get the ID of the main admin account to exclude from the CA Policy
-$ExcludeAdmin = Get-MgUser -userID admin@andykempdev.onmicrosoft.com
-$ExcludeAdminID =$ExcludeAdmin.ID
-    Write-Output "The Excluded user for all polcieis is $ExcludedAdmin and its ID is $ExcludeAdminID"
-
-
 
 # Enable MFA for all users
 $PolicyName = "101 - Enable MFA for all - Graph API"
@@ -122,8 +143,7 @@ $params = @{
     conditions = @{
         users = @{
             includeGroups = @("$GroupID")
-            excludeUsers = @("$ExcludeAdminID",
-                            "$UserID1",
+            excludeUsers = @("$UserID1",
                             "$UserID2")
         }
         applications = @{
@@ -149,8 +169,7 @@ $params = @{
     conditions = @{
         users = @{
             includeGroups = @("$GroupID")
-            excludeUsers = @("$ExcludeAdminID",
-                            "$UserID1",
+            excludeUsers = @("$UserID1",
                             "$UserID2")
         }
         applications = @{
@@ -180,3 +199,18 @@ $params = @{
 } 
 
 New-MgIdentityConditionalAccessPolicy -BodyParameter $params
+
+
+
+# Get the user ID of the owner
+$Owner = Get-MgUser -UserID $OwnerUPN
+$ownerId = $owner.Id
+
+# Add the user as an owner of the group
+$ownerRef = @{
+    "@odata.id" = "https://graph.microsoft.com/v1.0/users/$ownerId"
+}
+
+New-MgGroupOwnerByRef -GroupId $groupId -BodyParameter $ownerRef
+
+Write-Output "Owner added to the group. The owner ID is: $ownerId"
