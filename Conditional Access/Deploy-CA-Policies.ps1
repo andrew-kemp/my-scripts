@@ -225,8 +225,21 @@ New-MgIdentityConditionalAccessPolicy -BodyParameter $params
 
 
 
-# Get the user ID of the owner
-$Owner = Get-MgUser -UserID $OwnerUPN
+# Add BreakGlass 1 as Group Owner
+$Owner = Get-MgUser -UserID $$BreakGlass1
+$ownerId = $owner.Id
+
+# Add the user as an owner of the group
+$ownerRef = @{
+    "@odata.id" = "https://graph.microsoft.com/v1.0/users/$ownerId"
+}
+
+New-MgGroupOwnerByRef -GroupId $groupId -BodyParameter $ownerRef
+
+Write-Output "Owner added to the group. The owner ID is: $ownerId"
+
+# Add BreakGlass 2 as Group Owner
+$Owner = Get-MgUser -UserID $$BreakGlass2
 $ownerId = $owner.Id
 
 # Add the user as an owner of the group
