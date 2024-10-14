@@ -157,7 +157,7 @@ if ($group) {
     Write-Output "The target group $groupName for the CA Policies has been created. The group ID is: $GroupID"
 }
 
-
+########################################################################
 # Enable MFA for all users
 $PolicyName = "101 - Enable MFA for all - Graph API"
 $params = @{
@@ -184,10 +184,11 @@ New-MgIdentityConditionalAccessPolicy -BodyParameter $params
 Write-output "$PolicyName has been created"
 
 
-
+#########################################################################################
 # Only Allow Company Owned Devices access
+$PolicyName = "102 - Allow Company owned devices only - Graph API"
 $params = @{
-    displayName = "102 - Allow Company owned devices only - Graph API"
+    displayName = $PolicyName
     state = "enabledForReportingButNotEnforced"  # Set to "enabled" to enforce the policy
     conditions = @{
         users = @{
@@ -221,12 +222,39 @@ $params = @{
     }
 } 
 
+
+Write-Output "Creating Conditional Access Policy $PolicyName "
 New-MgIdentityConditionalAccessPolicy -BodyParameter $params
+Write-output "$PolicyName has been created"
+#####################################################################################
+# Privilege users to sign in every 8Hrs
 
-
+$PolicyName = "901 - Privileged ssers sign in every 8 hours - Graph API"
+$params = @{
+    displayName = $PolicyName 
+    state = "reportOnly"  # Set to "enabled" to enforce the policy
+    conditions = @{
+        users = @{
+            includeRoles = @("All")
+            excludeUsers = @("user1@domain.com", "user2@domain.com")
+        }
+        applications = @{
+            includeApplications = @("All")
+        }
+    }
+    sessionControls = @{
+        signInFrequency = @{
+            value = 8
+            type = "hours"
+        }
+    }
+}
+Write-Output "Creating Conditional Access Policy $PolicyName "
+New-MgIdentityConditionalAccessPolicy -BodyParameter $params
+Write-output "$PolicyName has been created"
 
 # Add BreakGlass 1 as Group Owner
-$Owner = Get-MgUser -UserID $$BreakGlass1
+$Owner = Get-MgUser -UserID $BreakGlass1
 $ownerId = $owner.Id
 
 # Add the user as an owner of the group
@@ -239,7 +267,7 @@ New-MgGroupOwnerByRef -GroupId $groupId -BodyParameter $ownerRef
 Write-Output "Owner added to the group. The owner ID is: $ownerId"
 
 # Add BreakGlass 2 as Group Owner
-$Owner = Get-MgUser -UserID $$BreakGlass2
+$Owner = Get-MgUser -UserID $BreakGlass2
 $ownerId = $owner.Id
 
 # Add the user as an owner of the group
