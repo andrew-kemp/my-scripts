@@ -138,6 +138,35 @@ if ($group) {
 
 # End Create Test Group
 ########################################################################
+########################################################################
+# VIP Group
+
+$VIPgroupName = "_Group - VIP Test"
+$VIPgroup = Get-MgGroup -Filter "DisplayName eq '$VIPgroupName'"
+
+if ($VIPgroup) {
+    # Group exists, store its ID in $GroupID
+    $VIPGroupID = $VIPgroup.Id
+    Write-Output "The targeted group ID for $VIPgroupName is: $VIPGroupID which will be applied to the CA Policies"
+} else {
+    # Group does not exist, create the group
+    $VIPgrpParams = @{
+        description="Conditional Access Policy Test Group for VIP Users"
+        displayName="_Group - VIP Test"
+        mailEnabled=$false
+        securityEnabled=$true
+        mailNickname="VIPcatest"
+       }
+       # Create the group based on the parameters set above which are pulled from the CSV
+       $VIPnewGroup =   New-MgGroup @VIPgrpParams
+     
+    #New-MgGroup -DisplayName $groupName -MailEnabled $false -MailNickname $groupName -SecurityEnabled $true
+    $VIPGroupID = $VIPnewGroup.Id
+    Write-Output "The target group $VIPgroupName for the CA Policies has been created. The group ID is: $VIPGroupID"
+}
+
+# End Create Test Group
+########################################################################
 
 ########################################################################
 # Create a group for Privileged accounts
@@ -177,6 +206,9 @@ $ownerRef = @{
 
 New-MgGroupOwnerByRef -GroupId $groupId -BodyParameter $ownerRef
 New-MgGroupOwnerByRef -GroupId $PrivGroupID -BodyParameter $ownerRef
+New-MgGroupOwnerByRef -GroupId $VIPGroupID -BodyParameter $ownerRef
+
+
 Write-Output "Owner added to the group. The owner ID is: $ownerId"
 
 # Add BreakGlass 2 as Group Owner
@@ -190,6 +222,7 @@ $ownerRef = @{
 
 New-MgGroupOwnerByRef -GroupId $groupId -BodyParameter $ownerRef
 New-MgGroupOwnerByRef -GroupId $PrivGroupID -BodyParameter $ownerRef
+New-MgGroupOwnerByRef -GroupId $VIPGroupID -BodyParameter $ownerRef
 
 Write-Output "Owner added to the group. The owner ID is: $ownerId"
 # End Add owners
@@ -226,9 +259,12 @@ foreach ($file in $jsonFiles) {
 
     # Determine the group to include based on the policy name
     $policyName = $jsonContent.DisplayName
-    if ($policyName -like "9*") {
+    if ($policyName -like "9*") 
+    {
         $includeGroupIds = $PrivGroupID
-    } else {
+        } elseif ($policyName -like "2*") {
+        $includeGroupIds = $VIPGroupID
+        } else {
         $includeGroupIds = $GroupID
     }
 
