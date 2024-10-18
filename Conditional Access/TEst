@@ -1,0 +1,9 @@
+$AllPolicies = Get-MgIdentityConditionalAccessPolicy -Filter "startswith(displayName,'_')"
+
+foreach ($Policy in $AllPolicies) {
+            {
+                $PolicyID = $Policy.Id
+                Remove-MgIdentityConditionalAccessPolicy -ConditionalAccessPolicyId $PolicyID 
+
+            }
+        }
